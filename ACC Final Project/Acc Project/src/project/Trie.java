@@ -167,7 +167,11 @@ public class Trie {
 		
 	}
 	
-    public static void priority( Map<Integer,Integer> leaf) {
+    public static String k;
+    public static int max=0;
+    public static String priority( Map<Integer,Integer> leaf) {
+       
+        
         // Step 1: Create a custom comparator to order elements based on values in descending order
         Comparator<Map.Entry<Integer, Integer>> valueComparator = (entry1, entry2) -> entry2.getValue() - entry1.getValue();
 
@@ -179,8 +183,8 @@ public class Trie {
         maxHeap.addAll(leaf.entrySet());
         else
         {
-        	System.out.println("Word Not Found");
-        	return;
+        	//System.out.println("Word Not Found");
+        	return null;
         }
         	
         	
@@ -190,9 +194,13 @@ public class Trie {
             Map.Entry<Integer, Integer> entry = maxHeap.poll();
             int key = entry.getKey();
             int value = entry.getValue();
+            if(value>=max){max=value;k=key+".txt";}
+            else if(value<max){}
             //System.out.println("Key: " + key + ", Value: " + value);
             System.out.println("File Number: " + key + ", Frequency: " + value);
         }
+        //System.out.println("The file is: "+k);
+        return k;
     }
     
     public static void create_whole_trie(String file_path,Trie trie)
