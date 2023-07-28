@@ -22,6 +22,7 @@ public class webCrawl {
     private HashSet<String> links;
     private static final int MAX_DEPTH = 400;
     private List<String> filteredLinks = new ArrayList<>();  
+    public static int j=0;
     
     // Regular expressions to exclude certain URLs
     private final String[] excludeRegexPatterns = {
@@ -43,6 +44,7 @@ public class webCrawl {
     }
 
     public void getlinks(String myURL) {
+        
         if ((!links.contains(myURL))) {
             try {
                 if (links.add(myURL)) {
@@ -52,6 +54,9 @@ public class webCrawl {
                     saveUrl(myString, str);
                     if (isValidLink(myURL)) {
                         filteredLinks.add(myURL);
+                        System.out.println(i+": "+myURL);
+                    }else{
+                        j++;
                     }
                 }
                 Document my_document = Jsoup.connect(myURL).get();
@@ -122,12 +127,14 @@ public class webCrawl {
 
     public void runWebcrawl(){
          webCrawl crawl = new webCrawl();
+         System.out.println("Loading Filtered Links: ");
         crawl.PageLinks("https://ca.news.yahoo.com/");
         List<String> filteredLinks = crawl.FilteredLinks();
-        System.out.println("Filtered Links:");
-        for (String link : filteredLinks) {
-            System.out.println(link);
-        }
+        System.out.println("Deleted Links: "+j);
+        //System.out.println("Filtered Links:");
+        //for (String link : filteredLinks) {
+          //  System.out.println(link);
+        //}
     }
 
     public static void main(String[] asd) {
