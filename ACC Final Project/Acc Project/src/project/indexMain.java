@@ -27,7 +27,14 @@ public class indexMain {
         Trie.create_whole_trie(file_path,trie);
         System.out.println("Enter the Word to Search:");
         String word= scanner.nextLine();
-        Trie.priority(trie.search(word));
+        String l = Trie.priority(trie.search(word));
+        
+        if(l == null){
+            System.out.println("The word "+word+" is not found");
+        }
+        else{
+            System.out.println("The maximum number of occurences of the word: "+word+" is in "+l);
+            KMPsearchfile(l,word);}
     }
     
 }
