@@ -24,7 +24,7 @@ public class Dict {
 	}
 	
 	public static void createDictionary() {
-		File directory = new File("ACC-Project-main//ACC Final Project//Acc Project//text_Files");
+		File directory = new File("text_Files");
 		String[] children = directory.list();
 		TreeMap<String,String> aListWords = new TreeMap<String,String>();
 		for (String str:children)
@@ -33,7 +33,7 @@ public class Dict {
 			if (strx.equals("txt"))
 			{
 				try {
-					dictionary("ACC-Project-main//ACC Final Project//Acc Project//text_Files" + "/"+ str,aListWords);
+					dictionary("text_Files" + "/"+ str,aListWords);
 					FileWriter writer = new FileWriter("dictionary.txt"); 
 					for(String s: aListWords.values()) {
 					  writer.write(s + System.lineSeparator());
