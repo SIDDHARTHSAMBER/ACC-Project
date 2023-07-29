@@ -69,7 +69,7 @@ public class KMPSearch {
     public static void runKMPsearch(String fz, String x){
         
         
-        String fileName = "ACC-Project-main//ACC Final Project//Acc Project//text_Files//"+fz; // Replace with the path to your text file
+        String fileName = "text_Files//"+fz; // Replace with the path to your text file
         String searchWord = x; // Replace with the word you want to search
 
         List<Integer> occurrences = searchWordInFile(fileName, searchWord);

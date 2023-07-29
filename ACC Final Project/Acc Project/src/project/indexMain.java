@@ -73,17 +73,17 @@ public static void spellCheck(String pattern) throws IOException {
         String word= scanner.nextLine();
         String l = Trie.priority(trie.search(word));
         
-        if(l == null){
+        while(l == null){
             System.out.println("The word "+word+" is not found");
             System.out.println(" Word suggestions :");
 			Dict.createDictionary();
             suggestions(word);
+            System.out.println("Enter the Word to Search:");
+            word= scanner.nextLine();
+            l = Trie.priority(trie.search(word));
         }
-        else{
             System.out.println("The maximum number of occurences of the word: "+word+" is in "+l);
-            KMPsearchfile(l,word);}
-        
-        
+            KMPsearchfile(l,word);       
     }
     
 }

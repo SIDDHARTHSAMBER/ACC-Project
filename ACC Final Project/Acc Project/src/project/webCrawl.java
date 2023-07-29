@@ -68,7 +68,7 @@ public class webCrawl {
                     }
                 }
             } catch (IOException e) {
-                System.err.println("For '" + myURL + "': " + e.getMessage());
+                //System.err.println("For '" + myURL + "': " + e.getMessage());
             }
         }
     }
@@ -112,7 +112,7 @@ public class webCrawl {
 			}
 			catch(IOException ie) 
 			{
-				System.out.println("IOException");
+				//System.out.println("IOException");
 			}
 		}
     }

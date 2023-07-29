@@ -12,6 +12,11 @@ import org.jsoup.*;
 import java.util.Objects;
 import java.util.PriorityQueue;
 
+
+// TrieNode Class Functionalities 
+//children character , trienode 
+// leaf integer file number integer occurences 
+// constructor allocate children hash map but not leaf hashmap  
 class TrieNode {
 	
     private Map<Character, TrieNode> children;
@@ -49,6 +54,7 @@ class TrieNode {
     	if(leaf.get(x)==null)
     	{
     		return 0;
+    		// it returns 0 if particular file has no entry 
     	}
     	else
         return leaf.get(x);
@@ -57,14 +63,19 @@ class TrieNode {
     } 
     public  Map<Integer,Integer> get_full_leaf() {
         return leaf;
+        // it will be null if whole hashmap is null else it will be something 
     } 
 }
+
+
 
 public class Trie {
     private TrieNode root;
 
+    //constructor initialize the root trie node 
     public Trie() {
         root = new TrieNode();
+        
     }
 
     public void insert(String word,int file_number) {
@@ -76,7 +87,7 @@ public class Trie {
         current.setEndOfWord(true);
         if(current.getleaf(file_number)==0)
         {
-        	// 0 means that it is null
+        	// 0 means that it is null, either there is no entry or either it is not a word yet 
         	current.setleaf(file_number, 1);
         }
         else
@@ -122,17 +133,7 @@ public class Trie {
         String wordBeforeExtension = fileName.substring(0, dotIndex);
         return Integer.parseInt(wordBeforeExtension);
     }
-    //
-    public boolean startsWith(String prefix) {
-        TrieNode current = root;
-        for (char ch : prefix.toCharArray()) {
-            current = current.getChildren().get(ch);
-            if (current == null) {
-                return false;
-            }
-        }
-        return true;
-    }
+
     
 	private static String[] processFile(File file)
 	{
@@ -154,6 +155,7 @@ public class Trie {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        // how about if we put this print line and return statemtn in catch block ? 
         System.out.println("File not processed");
 		return null;
 	}
@@ -162,9 +164,7 @@ public class Trie {
 	{
 		for (String word : file) {
 			trie.insert(word,file_number);
-        }
-		
-		
+        }	
 	}
 	
     public static String k;
@@ -213,9 +213,6 @@ public class Trie {
   	        if (files != null) {
   	            for (File file : files) {
   	                if (file.isFile()) {
-  	                    // Process individual file
-  	             	   //processFile(file,phone_pattern);
-  	                	//System.out.println(file.getName());
   	                	create_trie(processFile(file),trie,extractfile(file.getName()));	
   	                }
   	            }
@@ -237,7 +234,5 @@ public class Trie {
         priority(trie.search("said"));
     }
 }
-
-
 
 
