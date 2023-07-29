@@ -12,6 +12,10 @@ public class indexMain {
     public static void createTextFiles() throws IOException{
         HTMLtoText.createTextFiles();
     }
+
+    public static void KMPsearchfile(String fz, String x) throws IOException{
+        KMPSearch.runKMPsearch(fz,x);
+    }
     
     public static void createTrie(){
     	
