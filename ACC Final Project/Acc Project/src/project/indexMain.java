@@ -54,6 +54,24 @@ public static void spellCheck(String pattern) throws IOException {
 		}	
 	}
 
+public static void autocomplete(Trie trie,String pattern)
+{
+	 List<String>suggestions =trie.autocomplete(pattern);
+	 if(!suggestions.isEmpty())
+	 {
+		 System.out.println("It is a mathcing prefix:  ");
+         for (String suggest : suggestions) {
+             System.out.println(suggest);
+         }
+		 
+	 }
+	 else
+	 {
+		 System.out.println("It is not a mathcing prefix:  ");
+		 
+	 }  	
+}
+
     public static void suggestions(String pattern) {
 		try {
 			spellCheck(pattern);
@@ -69,21 +87,30 @@ public static void spellCheck(String pattern) throws IOException {
         Trie trie = new Trie(); 
         String file_path="text_Files";
         Trie.create_whole_trie(file_path,trie);
-        System.out.println("Enter the Word to Search:");
+        System.out.println("Enter the Word to Search: or enter 1 to exit");
         String word= scanner.nextLine();
-        String l = Trie.priority(trie.search(word));
+        while(!word.equals("1")){
+            String l = Trie.priority(trie.search(word));
         
-        while(l == null){
+        if(l == null){
             System.out.println("The word "+word+" is not found");
             System.out.println(" Word suggestions :");
-			Dict.createDictionary();
+			//Dict.createDictionary();
             suggestions(word);
-            System.out.println("Enter the Word to Search:");
-            word= scanner.nextLine();
-            l = Trie.priority(trie.search(word));
+            autocomplete(trie,word);
         }
+        else{
+        	
             System.out.println("The maximum number of occurences of the word: "+word+" is in "+l);
-            KMPsearchfile(l,word);       
+            KMPsearchfile(l,word);
+            autocomplete(trie,word);
+        }
+            System.out.println("Enter the Word to Search: or enter 1 to exit");
+             word= scanner.nextLine();
+        }
+        
+        
+        
     }
     
 }

@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -15,55 +16,55 @@ import java.util.PriorityQueue;
 
 // TrieNode Class Functionalities 
 //children character , trienode 
-// leaf integer file number integer occurences 
-// constructor allocate children hash map but not leaf hashmap  
+// freq_table integer file number integer occurences 
+// constructor allocate children hash map but not freq_table hashmap  
 class TrieNode {
 	
     private Map<Character, TrieNode> children;
     private boolean isEndOfWord;
-    private Map<Integer,Integer> leaf;
+    private Map<Integer,Integer> freq_table;
+    private int user_searched;
 
     public TrieNode() {
         children = new HashMap<>();
         isEndOfWord = false;
-        leaf=null;  
+        freq_table=new HashMap<>();
+        user_searched=0;
     }
+    // Tracking User searches  
+    public int  get_search_times() {
+        return user_searched;
+    }
+    public void update_search_time() {
+        user_searched=user_searched+1;
+    }
+    // Tracking trie children
     public Map<Character, TrieNode> getChildren() {
         return children;
     }
+    //Tracking endofword
     public boolean isEndOfWord() {
         return isEndOfWord;
     }
     public void setEndOfWord(boolean endOfWord) {
         isEndOfWord = endOfWord;
     }
-    public void setleaf(int x,int y) {
-    	if(leaf==null)
-    	{
-    		leaf=new HashMap<>();
-    		// we are allocating memory only first entry is inserted
-    	}
-    	leaf.put(x, y);
+    // Tracking freq_table 
+    public void setfreqt(int x,int y) {
+    	freq_table.put(x, y);
     }
-    public int  getleaf(int x) {
-    	if(this.leaf==null)
-    	{
-    		// it returns 0 if whole hashMap is NULL
-    		return 0;
-    	}
-    	if(leaf.get(x)==null)
+    public int  getfreqt(int x) {
+    	if(freq_table.get(x)==null)
     	{
     		return 0;
-    		// it returns 0 if particular file has no entry 
+    		// return 0 if table has no entry for x 
     	}
-    	else
-        return leaf.get(x);
-        // it returns null if there is no value corresponding to x
-        // other-wise it returns the value 
+        return freq_table.get(x);
+        // else it returns the corresponding value 
     } 
-    public  Map<Integer,Integer> get_full_leaf() {
-        return leaf;
-        // it will be null if whole hashmap is null else it will be something 
+    public  Map<Integer,Integer> get_full_table() {
+        return freq_table;
+        // it return whole table or hashmap , it could be empty or filled 
     } 
 }
 
@@ -78,26 +79,77 @@ public class Trie {
         
     }
 
+    // Insertion logic 
+    /*
+     * current TrieNode is set to root 
+     * for each character of word , it's children map is checked for character if absent then new trienode mapping is created 
+     * then current node is set to that newly created trinode mapping or oldone if it exists 
+     * So in the end trinode associated with last character is set 
+     * So if you put getchildren to it it will be child of last character 
+     * we check the frequency table of last character , if file number is already there we put 1 , means word inserted 
+     * else we increment it 
+     * */
     public void insert(String word,int file_number) {
         TrieNode current = root;
         for (char ch : word.toCharArray()) {
             current.getChildren().putIfAbsent(ch, new TrieNode());
             current = current.getChildren().get(ch);
         }
-        current.setEndOfWord(true);
-        if(current.getleaf(file_number)==0)
+        if(current.getfreqt(file_number)==0)
         {
-        	// 0 means that it is null, either there is no entry or either it is not a word yet 
-        	current.setleaf(file_number, 1);
+        	// 0 means that there there is no entry 
+        	current.setfreqt(file_number, 1);
         }
         else
         {	
-        	int temp =current.getleaf(file_number)+1;
-        	current.setleaf(file_number,temp);
+        	int temp =current.getfreqt(file_number)+1;
+        	current.setfreqt(file_number,temp);
         }
     }
-
+    
+    // Searching logic
+    /*
+     * current TrieNode is set to root 
+     * for each character of word , it's children map is checked for character if absent then null is returend else the corresponding trinode is returned
+     * if somehow currentnode becomes null function returns null 
+     * else function returns the frequency table of the last character node  
+     * */
     public Map<Integer,Integer> search(String word) {
+        TrieNode current = root;
+        for (char ch : word.toCharArray()) {
+            current = current.getChildren().get(ch); 
+            if (current == null) {
+                return null;
+            }
+        }
+        	current.update_search_time();
+        	return current.get_full_table();
+    }
+    
+    public boolean startsWith(String prefix) {
+        TrieNode current = root;
+        for (char ch : prefix.toCharArray()) {
+            current = current.getChildren().get(ch);
+            if (current == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    
+
+    
+    // if there is no node corresponding to last chracter of prefix it returns null 
+    // if there is node corresponding to last character it returns that node
+    
+    /*
+     * current TrieNode is set to root 
+     * for each character of word , it's children map is checked for character if absent then null is returend else the corresponding trinode is returned
+     * if somehow currentnode then function returns null , representing that word is not there in trie
+     * else it returns the trinode of the last character node  
+     * */
+    public TrieNode search2(String word) {
         TrieNode current = root;
         for (char ch : word.toCharArray()) {
             current = current.getChildren().get(ch);
@@ -105,15 +157,53 @@ public class Trie {
                 return null;
             }
         }
-        if(current.get_full_leaf()==null)
-        {
-        	return null;
-        }
-        else
-        {
-        	return current.get_full_leaf();
-        }
+        	return current;
     }
+    
+    // Autocomplete logic 
+    /*
+     * suggestion List is created and search2 is called to get the node , if prefix does not exist in trie node it return empty list 
+     * else that trinode associated with last character , prefix word and suggestion list is passed to collectsuggestions 
+     * */
+    
+
+    public List<String> autocomplete(String word) {
+        List<String> suggestions = new ArrayList<>();
+        TrieNode node = search2(word);
+        if (node != null) {
+            collectSuggestions(node, word, suggestions);
+        }
+        return suggestions;
+    }
+    
+    /*
+    	if freqeuncy table is not empty it means that the word exist in trie in that case we will add prefix  
+    	for each of the entry in children map i.e for each chracter , we will go deep 
+    	we will keep on adding the key to prefix and changing the trinode as we traverse
+     * */
+    
+    private void collectSuggestions(TrieNode node, String prefix, List<String> suggestions) {
+    	// if frequncy table is not empty it means that the word exist in trie 
+    	// in that case we will add prefix  
+        if (!node.get_full_table().isEmpty()) {
+        	// If we type the same word which is there in trie it will suggest that also 
+            suggestions.add(prefix);
+        }
+        
+        // Here we are using DFS , traversing frequency table depth wise for suggesting words 
+        // traverse our freq_table and if it is not null then add the character word traverse to children of that node 
+        // if end of word then add it to suggestion 
+        
+        for (Map.Entry<Character, TrieNode> entry : node.getChildren().entrySet()) {
+            Character key = entry.getKey();
+            TrieNode value = entry.getValue();
+            if(value!=null)
+             	collectSuggestions(value, prefix + key, suggestions);
+        }
+         
+        }
+    
+    /// Debug function just to check what the frequency table contains 
     
     private static void print(Map<Integer,Integer> a)
     {
@@ -164,12 +254,27 @@ public class Trie {
 	{
 		for (String word : file) {
 			trie.insert(word,file_number);
-        }	
+        }
+		
+		///
+		try {
+			
+			FileWriter writer = new FileWriter("dictionary.txt",true); 
+			for(String s: file) {
+			  writer.write(s + System.lineSeparator());
+			}
+			writer.close();
+			System.out.println("File created");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		///
 	}
 	
     public static String k;
     public static int max=0;
-    public static String priority( Map<Integer,Integer> leaf) {
+    public static String priority( Map<Integer,Integer> freq_table) {
        
         
         // Step 1: Create a custom comparator to order elements based on values in descending order
@@ -179,17 +284,28 @@ public class Trie {
         PriorityQueue<Map.Entry<Integer, Integer>> maxHeap = new PriorityQueue<>(valueComparator);
 
         // Step 3: Add each key-value pair to the max-heap (PriorityQueue)
-        if(leaf!=null)
-        maxHeap.addAll(leaf.entrySet());
-        else
+        //if(freq_table!=null)
+        //if(!freq_table.isEmpty())
+        if(freq_table!=null)
         {
-        	//System.out.println("Word Not Found");
-        	return null;
+        	if(freq_table.isEmpty())
+        	{
+        		return null;
+        	}
+        	else
+        	{
+        		maxHeap.addAll(freq_table.entrySet());	
+        	}
+        }
+        else if(freq_table==null)
+        {        		
+        		return null;
         }
         	
         	
 
         // Step 4: Retrieve elements in descending order of values (max-heap property)
+        max=0;
         while (!maxHeap.isEmpty()) {
             Map.Entry<Integer, Integer> entry = maxHeap.poll();
             int key = entry.getKey();
@@ -199,6 +315,7 @@ public class Trie {
             //System.out.println("Key: " + key + ", Value: " + value);
             System.out.println("File Number: " + key + ", Frequency: " + value);
         }
+        
         //System.out.println("The file is: "+k);
         return k;
     }
@@ -229,9 +346,22 @@ public class Trie {
         
         create_whole_trie(file_path,trie);
         
-        System.out.println("said");
+        //System.out.println("cat");
         
-        priority(trie.search("said"));
+        List<String>suggestions =trie.autocomplete("an");
+        
+       
+        
+        for (String suggest : suggestions) {
+            System.out.println(suggest);
+        }
+        
+        // Autocompelte working somehow 
+        
+        
+        Trie.print(trie.search("ten"));
+        
+        //priority(trie.search("adam"));
     }
 }
 

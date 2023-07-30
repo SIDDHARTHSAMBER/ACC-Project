@@ -26,7 +26,10 @@ public class KMPSearch {
                 }
 
                 if (j == M) {
-                    occurrences.add(i - j);
+                    // Check if it is a separate word
+                    if (isSeparateWord(text, i - j - 1, i)) {
+                        occurrences.add(i - j);
+                    }
                     j = lps[j - 1];
                 } else if (i < N && pattern.charAt(j) != text.charAt(i)) {
                     if (j != 0) {
@@ -66,20 +69,16 @@ public class KMPSearch {
         }
     }
 
-    public static void runKMPsearch(String fz, String x){
-        
-        
-        String fileName = "text_Files//"+fz; // Replace with the path to your text file
+    public static void runKMPsearch(String fz, String x) {
+        String fileName = "text_Files//" + fz; // Replace with the path to your text file
         String searchWord = x; // Replace with the word you want to search
 
         List<Integer> occurrences = searchWordInFile(fileName, searchWord);
-        System.out.println("By using KMPSearch the Occurrences of '" + searchWord + "' in the file: "+fz+" is found at: " + occurrences);
-   
-        
-         }
+        System.out.println("By using KMPSearch the Occurrences of '" + searchWord + "' in the file: " + fz + " is found at: " + occurrences);
+    }
 
     public static void main(String[] args) {
-      
+       // runKMPsearch("example.txt", "goal"); // Replace with your desired file and search word
     }
 
     public static List<Integer> searchWordInFile(String fileName, String searchWord) {
@@ -101,5 +100,16 @@ public class KMPSearch {
             e.printStackTrace();
         }
         return content.toString();
+    }
+
+    private static boolean isSeparateWord(String text, int startIndex, int endIndex) {
+        if (startIndex < 0 || endIndex >= text.length()) {
+            return true; // If it is the first or last word in the text, it's a separate word
+        }
+
+        char startChar = text.charAt(startIndex);
+        char endChar = text.charAt(endIndex);
+
+        return !Character.isLetterOrDigit(startChar) && !Character.isLetterOrDigit(endChar);
     }
 }
