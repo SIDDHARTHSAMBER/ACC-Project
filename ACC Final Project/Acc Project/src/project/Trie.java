@@ -117,16 +117,6 @@ public class Trie {
         	return current.get_full_table();
     }
     
-    public boolean startsWith(String prefix) {
-        TrieNode current = root;
-        for (char ch : prefix.toCharArray()) {
-            current = current.getChildren().get(ch);
-            if (current == null) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     
 
@@ -172,7 +162,7 @@ public class Trie {
     	for each of the entry in children map i.e for each chracter , we will go deep 
     	we will keep on adding the key to prefix and changing the trinode as we traverse
      * */
-    
+  
     private void collectSuggestions(TrieNode node, String prefix, List<String> suggestions) {
     	// if frequncy table is not empty it means that the word exist in trie 
     	// in that case we will add prefix  
@@ -193,6 +183,7 @@ public class Trie {
         }
          
         }
+    
     
     /// Debug function just to check what the frequency table contains 
     

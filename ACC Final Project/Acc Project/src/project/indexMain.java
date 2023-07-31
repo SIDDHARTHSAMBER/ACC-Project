@@ -95,7 +95,6 @@ public static void autocomplete(Trie trie,String pattern)
         if(l == null){
             System.out.println("The word "+word+" is not found");
             System.out.println(" Word suggestions :");
-			//Dict.createDictionary();
             suggestions(word);
             autocomplete(trie,word);
         }
