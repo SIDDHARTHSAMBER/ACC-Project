@@ -19,7 +19,6 @@ import java.util.PriorityQueue;
 // freq_table integer file number integer occurences 
 // constructor allocate children hash map but not freq_table hashmap  
 class TrieNode {
-	
     private Map<Character, TrieNode> children;
     private boolean isEndOfWord;
     private Map<Integer,Integer> freq_table;
@@ -27,7 +26,6 @@ class TrieNode {
 
     public TrieNode() {
         children = new HashMap<>();
-        isEndOfWord = false;
         freq_table=new HashMap<>();
         user_searched=0;
     }
@@ -41,13 +39,6 @@ class TrieNode {
     // Tracking trie children
     public Map<Character, TrieNode> getChildren() {
         return children;
-    }
-    //Tracking endofword
-    public boolean isEndOfWord() {
-        return isEndOfWord;
-    }
-    public void setEndOfWord(boolean endOfWord) {
-        isEndOfWord = endOfWord;
     }
     // Tracking freq_table 
     public void setfreqt(int x,int y) {
@@ -264,7 +255,6 @@ public class Trie {
 			  writer.write(s + System.lineSeparator());
 			}
 			writer.close();
-			System.out.println("File created");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -276,16 +266,14 @@ public class Trie {
     public static int max=0;
     public static String priority( Map<Integer,Integer> freq_table) {
        
-        
-        // Step 1: Create a custom comparator to order elements based on values in descending order
+    	// Create Comparator Descending order 
         Comparator<Map.Entry<Integer, Integer>> valueComparator = (entry1, entry2) -> entry2.getValue() - entry1.getValue();
 
-        // Step 2: Initialize a PriorityQueue with the custom comparator
+        //Initialize a PriorityQueue with the custom comparator
         PriorityQueue<Map.Entry<Integer, Integer>> maxHeap = new PriorityQueue<>(valueComparator);
-
-        // Step 3: Add each key-value pair to the max-heap (PriorityQueue)
-        //if(freq_table!=null)
-        //if(!freq_table.isEmpty())
+        
+        
+        //Add each key-value pair to the max-heap
         if(freq_table!=null)
         {
         	if(freq_table.isEmpty())
@@ -304,7 +292,7 @@ public class Trie {
         	
         	
 
-        // Step 4: Retrieve elements in descending order of values (max-heap property)
+        //Retrieve elements from max heap
         max=0;
         while (!maxHeap.isEmpty()) {
             Map.Entry<Integer, Integer> entry = maxHeap.poll();
@@ -312,11 +300,8 @@ public class Trie {
             int value = entry.getValue();
             if(value>=max){max=value;k=key+".txt";}
             else if(value<max){}
-            //System.out.println("Key: " + key + ", Value: " + value);
             System.out.println("File Number: " + key + ", Frequency: " + value);
         }
-        
-        //System.out.println("The file is: "+k);
         return k;
     }
     
@@ -324,7 +309,6 @@ public class Trie {
     {
     	try {
     		File folder = new File(file_path);
-  	 	   //File folder = new File("text_Files");
   	 	   File[] files = folder.listFiles();
   	 	  
   	        if (files != null) {
@@ -346,22 +330,26 @@ public class Trie {
         
         create_whole_trie(file_path,trie);
         
-        //System.out.println("cat");
+        // Searching news in trie
+        System.out.println("Searching in Trie");
+        Trie.print(trie.search("news"));
+        System.out.println();
         
+        
+        // Printing the priority Queue
+        System.out.println("Priority Queue printing");
+        priority(trie.search("news"));
+        System.out.println();
+        
+        
+        // Printing Auto suggestion for an
+        System.out.println("Auto Suggestion");
         List<String>suggestions =trie.autocomplete("an");
-        
-       
-        
         for (String suggest : suggestions) {
             System.out.println(suggest);
         }
-        
-        // Autocompelte working somehow 
-        
-        
-        Trie.print(trie.search("ten"));
-        
-        //priority(trie.search("adam"));
+        System.out.println();
+
     }
 }
 
